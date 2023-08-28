@@ -7,8 +7,10 @@ ClarifaiStreamlitCSS.insert_default_css(st)
 
 st.markdown("Please select a specific page from the sidebar to the left")
 from dotenv import load_dotenv
+
 load_dotenv()
 import os
+
 clarifai_pat = os.getenv('CLARIFAI_PAT')
 
 PAT = clarifai_pat
@@ -23,21 +25,21 @@ import streamlit as st
 
 storyname = st.text_input("Create a video on the topic ")
 
-if(st.button("SUBMIT")):
+if (st.button("SUBMIT")):
     prompt = """
     Generate a full compelling video story script for youtube video about """ + storyname + """You choose video tone ,names and everthing in the video . For each sentence in the story, provide a related visual image scene description to enhance the storytelling. Remember to format the output as follows: Image Prompt: [Insert image description or scene here] Narrator: [Write the narration or dialogue for the sentence] Image Prompt: [Insert image description or scene here] Narrator: [Write the narration or dialogue for the sentence] and so on untill the end of the story"""
-    
+
     from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
     from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
     from clarifai_grpc.grpc.api.status import status_code_pb2
-    
+
     channel = ClarifaiChannel.get_grpc_channel()
     stub = service_pb2_grpc.V2Stub(channel)
-    
+
     metadata = (('authorization', 'Key ' + PAT),)
-    
+
     userDataObject = resources_pb2.UserAppIDSet(user_id=USER_ID, app_id=APP_ID)
-    
+
     post_model_outputs_response = stub.PostModelOutputs(
         service_pb2.PostModelOutputsRequest(
             user_app_id=userDataObject,
@@ -58,10 +60,10 @@ if(st.button("SUBMIT")):
     if post_model_outputs_response.status.code != status_code_pb2.SUCCESS:
         print(post_model_outputs_response.status)
         raise Exception(f"Post model outputs failed, status: {post_model_outputs_response.status.description}")
-    
+
     # Since we have one input, one output will exist here
     output = post_model_outputs_response.outputs[0]
-    
+
     st.write("Completion:\n")
     st.write(output.data.text.raw)
     prompt_text = output.data.text.raw
@@ -71,7 +73,16 @@ if(st.button("SUBMIT")):
     narrator_prompt = []
     for iter in splitted_prompts:
         values = iter.split('Narrator:')
-        image_prompt.append((values[0]).split('.\\n\\n')[0])
+        image_prompt_current = ((values[0]).split('.\\n\\n')[0])
+        import requests
+
+        response = requests.post("https://microsoft-promptist.hf.space/run/predict", json={
+            "data": [
+                image_prompt_current,
+            ]}).json()
+
+        image_prompt.append(response["data"][0])
+        st.write(response['data'][0])
         try:
             narrator_prompt_text = (values[1]).split('.\\n\\n')
             narrator_prompt.append(narrator_prompt_text[0])
@@ -85,6 +96,7 @@ if(st.button("SUBMIT")):
         st.write(iter)
 
     from gtts import gTTS
+
     count = 0
 
     for idx, para in enumerate(narrator_prompt):
@@ -94,7 +106,6 @@ if(st.button("SUBMIT")):
         print(f"Generated audio for prompt {idx}")
         count = count + 1
 
-
     USER_ID = 'stability-ai'
     APP_ID = 'stable-diffusion-2'
     MODEL_ID = 'stable-diffusion-xl'
@@ -103,6 +114,7 @@ if(st.button("SUBMIT")):
     from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
     from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
     from clarifai_grpc.grpc.api.status import status_code_pb2
+
     channel = ClarifaiChannel.get_grpc_channel()
     stub = service_pb2_grpc.V2Stub(channel)
     metadata = (('authorization', 'Key ' + PAT),)
@@ -110,8 +122,6 @@ if(st.button("SUBMIT")):
     if post_model_outputs_response.status.code != status_code_pb2.SUCCESS:
         print(post_model_outputs_response.status)
         raise Exception("Post model outputs failed, status: " + post_model_outputs_response.status.description)
-
-
 
     print("Created yeah")
     for concept in output.data.concepts:
@@ -177,10 +187,6 @@ if(st.button("SUBMIT")):
     # Save the final video
     video.write_videofile(output_video_filename, codec='libx264', threads=4, audio_codec='aac',
                           fps=24)  # Adjust the frame rate as needed
-
     print("Video creation completed!")
-
-
-
-
-
+    st.video("output_video.mp4")
+    
