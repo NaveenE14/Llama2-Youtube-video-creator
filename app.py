@@ -1,7 +1,7 @@
 import streamlit as st
 from clarifai_utils.modules.css import ClarifaiStreamlitCSS
 
-st.set_page_config(layout="wide")
+st.set_page_config(page_title="LLAMA 2 Video Creator", layout="wide")
 
 ClarifaiStreamlitCSS.insert_default_css(st)
 
@@ -20,9 +20,56 @@ APP_ID = 'Llama-2'
 # Change these to whatever model and text URL you want to use
 MODEL_ID = 'llama2-13b-chat'
 MODEL_VERSION_ID = '79a1af31aa8249a99602fc05687e8f40'
+
+
+# Set page title
 import streamlit as st
 
-storyname = st.text_input("Create a video on the topic ")
+# Set page title
+
+
+# Main Title
+st.title("🎥LLamaScriptAI: Revolutionize Video Creation with AI Magic 🦙🎥")
+
+# Description
+st.markdown("""
+Create captivating videos effortlessly with the YouTube Video Creator powered by LLAMA 2! ✨
+🌟 **About LLamaScriptAI:**
+Step into a realm of boundless creativity with LLamaScriptAI, your all-inclusive AI video generation platform. Imagine the power of crafting captivating videos with just one prompt. Scripting, imagery, and narration converge seamlessly to bring your visions to life.
+
+📜 **Scripting Beyond Imagination:**
+Witness the transformation as LLamaScriptAI's AI models convert your prompts into immersive scripts. Watch your ideas unfold into captivating narratives that resonate with your audience.
+
+🖼️ **Image Prompts & Stable Diffusion XL:**
+LLAMA 2 generates image prompts which are then processed by the powerful Stable Diffusion XL model. This collaboration results in captivating and lifelike images that seamlessly align with your content.
+
+🗣️ **Narration with gTTS:**
+For natural and expressive narration, we use Google Text-to-Speech (gTTS). Your scripts come to life with lifelike audio.
+
+🎉 **Features:**
+- AI-generated scripts and image prompts
+- High-quality images from Stable Diffusion XL
+- Natural voiceover using Google Text-to-Speech
+- One-click video creation
+
+🎭 **Create Stories of Any Genre:**
+Craft stories of any genre you need, from drama to comedy, fantasy to documentary. LLamaScriptAI adapts to your creative vision, allowing you to explore limitless storytelling possibilities.
+
+🚀 **AI Video Generation: Unveiling the Future:**
+LLamaScriptAI introduces a paradigm shift in video creation. Harness the power of AI to create full videos from a single prompt. With LLamaScriptAI, your ideas are transformed into complete videos with just a single input.
+
+🌟 **About LLAMA 2:**
+LLAMA 2 is a cutting-edge large language model that empowers you to create stunning videos from scratch. It handles everything from generating scripts to crafting mesmerizing image prompts.
+
+🎬 **Output:**
+LLAMA 2 delivers your masterpiece as a full video, combining its AI-generated script content, mesmerizing images from Stable Diffusion XL, and natural narration.
+
+Experience the future of video creation with YouTube Video Creator powered by LLAMA 2! 🚀
+
+""")
+
+
+storyname = st.text_input("Create a video about")
 
 if (st.button("SUBMIT")):
     prompt = """
@@ -122,7 +169,7 @@ if (st.button("SUBMIT")):
         print(post_model_outputs_response.status)
         raise Exception("Post model outputs failed, status: " + post_model_outputs_response.status.description)
 
-    print("Created yeah")
+    print("Created text to speech succesfully")
     for concept in output.data.concepts:
         print("%s %.2f" % (concept.name, concept.value))
     for idx, iter in enumerate(image_prompt):
@@ -186,6 +233,5 @@ if (st.button("SUBMIT")):
     # Save the final video
     video.write_videofile(output_video_filename, codec='libx264', threads=4, audio_codec='aac',
                           fps=24)  # Adjust the frame rate as needed
-    print("Video creation completed!")
     st.video("output_video.mp4")
-    
+    print("Video creation completed!")
