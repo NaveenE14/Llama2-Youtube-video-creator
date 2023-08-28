@@ -73,7 +73,7 @@ storyname = st.text_input("Create a video about")
 
 if (st.button("SUBMIT")):
     prompt = """
-    Generate a full compelling video story script for youtube video about """ + storyname + """You choose video tone,genre ,the length of the entire video be 1 minute,names and everthing in the video . For each sentence in the story, provide a related visual image scene description to enhance the storytelling. Remember to format the output as follows: Image Prompt: [Insert image description or scene here] Narrator: [Write the narration or dialogue for the sentence] Image Prompt: [Insert image description or scene here] Narrator: [Write the narration or dialogue for the sentence] and so on untill the end of the story"""
+    Generate a fully compelling video story script for youtube video about """ + storyname + """You choose video tone,genre ,the length of the entire video be 1 minute,names and everthing in the video . For each sentence in the story, provide a related visual image scene description to enhance the storytelling. Remember to format the output as follows: Image Prompt: [Insert image description or scene here] Narrator: [Write the narration or dialogue for the sentence] Image Prompt: [Insert image description or scene here] Narrator: [Write the narration or dialogue for the sentence] and so on untill the end of the story. return without commentary and title , only in format"""
 
     from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
     from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
