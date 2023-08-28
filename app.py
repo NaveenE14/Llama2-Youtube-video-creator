@@ -18,8 +18,8 @@ PAT = clarifai_pat
 USER_ID = 'meta'
 APP_ID = 'Llama-2'
 # Change these to whatever model and text URL you want to use
-MODEL_ID = 'llama2-13b-chat'
-MODEL_VERSION_ID = '79a1af31aa8249a99602fc05687e8f40'
+MODEL_ID = 'llama2-70b-chat'
+MODEL_VERSION_ID = '6c27e86364ba461d98de95cddc559cb3'
 
 
 # Set page title
